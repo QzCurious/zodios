@@ -3,6 +3,7 @@ import express from "express";
 import { AddressInfo } from "net";
 import { z } from "zod";
 import { makeApi, Zodios, ZodiosInstance } from ".";
+import { zodValidationPlugin } from "./plugins/zod-validation.plugin";
 
 const userApi = makeApi([
   {
@@ -71,6 +72,12 @@ describe("group to avoid bug", () => {
       request: requestInterceptor,
     });
 
+    // xApiClient.postA({});
+    // xApiClient.postB();
+
+    const spySendRequestCount = jest.spyOn(xApiClient, "request");
+    const spyZodValidationCount = jest.spyOn(zodValidationPlugin(), "request");
+
     const x = await Promise.all([
       //
       xApiClient.postA({}),
@@ -78,6 +85,8 @@ describe("group to avoid bug", () => {
       // xApiClient.postC(),
       // xApiClient.postD(),
     ]); //?
+    expect(spySendRequestCount).toBeCalledTimes(x.length);
+    expect(spyZodValidationCount).toBeCalledTimes(x.length);
     expect(requestInterceptor).toBeCalledTimes(x.length);
   });
 });
