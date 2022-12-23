@@ -113,6 +113,7 @@ export function findEndpointErrorsByAlias(
   err: AxiosError
 ) {
   const endpoint = findEndpointByAlias(api, alias);
+  console.log(endpoint?.path, err.config?.url); // /:id, /some-id
   return endpoint &&
     err.config &&
     endpoint.method === err.config.method &&
